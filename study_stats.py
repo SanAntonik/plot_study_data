@@ -1,13 +1,12 @@
 import matplotlib.pyplot as plt
 import math
-# import statistics
 
 
 def calculate(PATH):
     with open(PATH, "r") as f:
         data = f.read()
         lines = data.splitlines()
-        # month = lines[0]
+        month = lines[0]
 
         # maths = 0
         # computer_science = 0
@@ -32,39 +31,38 @@ def calculate(PATH):
         std = math.sqrt(
             (sum([(day_total - mean)**2 for day_total in study_time_per_day]))/(month_last_day))
         print(std)
-        # print(statistics.stdev(study_time_per_day))
-        return study_time_per_day, mean, std
+        return study_time_per_day, mean, std, month_last_day, month
 
 
 def plot_data(data):
     print(data)
-    total_time, mean, std = data
-    print(total_time)
+    total_time, mean, std, month_last_day, month = data
     min_count = 0
     inside_1std = 0
     for day_total in total_time:
         if day_total >= (mean-std) and day_total <= (mean+std):
             inside_1std += 1
-        print(day_total)
+        # print(day_total)
         min_count += day_total
     print(min_count, min_count//60)
-    print(inside_1std, inside_1std/31)
+    print(inside_1std, inside_1std/month_last_day)
 
-    fig, ax = plt.subplots()
+    fig, (ax1, ax2) = plt.subplots(ncols=2)
+    fig.suptitle(month)
+    ax1.bar([x for x in range(1, month_last_day+1)], total_time)
 
-    ax.hist(total_time)
 
-    plt.show()
-
-    plt.plot(total_time)
-    plt.axhline(y=mean-std, color='k', linestyle='-')
-    plt.axhline(y=mean, color='r', linestyle='-')
-    plt.axhline(y=mean+std, color='k', linestyle='-')
+    ax2.plot(total_time, color="purple")
+    ax2.axhline(y=mean-std, color='k', linestyle='-')
+    ax2.axhline(y=mean, color='r', linestyle='-', label="mean")
+    ax2.axhline(y=mean+std, color='k', linestyle='-', label="mean+-std")
+    ax2.legend()
 
     plt.show()
 
 
 if __name__ == '__main__':
-    data_to_plot_PATH = "C:/Users/San/Documents/inf/time monitoring/Mar 2022 study data.txt"
+    # data_to_plot_PATH = "C:/Users/San/Documents/inf/time monitoring/Mar 2022 study data.txt"
+    data_to_plot_PATH = "C:/Users/San/Documents/inf/time monitoring/studying time.txt"
     # print(calculate(data_to_plot_PATH))
     print(plot_data(calculate(data_to_plot_PATH)))
